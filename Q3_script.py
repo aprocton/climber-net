@@ -9,6 +9,7 @@ import networkx as nx
 from networkx.algorithms import bipartite
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
+%matplotlib inline
 
 
 def FA_split(string):
@@ -159,3 +160,24 @@ counts[:25]
 canvas = toyplot.Canvas(700, 500)
 axis = canvas.cartesian()
 axis.bars(range(24), counts.f1[:24], title=counts.f0[:24]);
+
+
+## create a unipartite network of climbers
+
+# build a bipartite graph
+climbs = list(set(firsts.name.values.tolist()))
+FAs = list(set(climbers))
+
+B = nx.Graph()
+B.add_nodes_from(climbs, bipartite=0)
+B.add_nodes_from(FAs, bipartite=1)
+B.add_edges_from(edges)
+
+# project the graph to unipartite
+G = nx.projected_graph(B, FAs)
+
+# plot using matplotlib
+plt.rcParams['figure.figsize'] = [14, 10]        
+
+pos = nx.spring_layout(G)
+fig=nx.draw(G, pos=pos, with_labels=False, node_color = '#0000FF', node_size = 100)
